@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的第一个Netlify网站</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎉 欢迎来到我的网站！</h1>
+            <p class="subtitle">部署在 Netlify，完全免费</p>
+        </header>
+        
+        <main>
+            <div class="card">
+                <h2>🚀 特性介绍</h2>
+                <ul>
+                    <li>✅ 全球CDN加速</li>
+                    <li>✅ 免费HTTPS证书</li>
+                    <li>✅ 自动部署更新</li>
+                    <li>✅ 自定义域名支持</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h2>📊 网站信息</h2>
+                <div id="info">
+                    <p>加载中...</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🔍 测试搜索API</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="输入搜索词...">
+                    <button onclick="search()">搜索</button>
+                </div>
+                <div id="searchResults"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2024 我的网站 | 托管于 <a href="https://netlify.com" target="_blank">Netlify</a></p>
+            <p id="siteUrl"></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
