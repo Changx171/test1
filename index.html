@@ -3,50 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的第一个Netlify网站</title>
-    <link rel="stylesheet" href="style.css">
+    <title>搜索API测试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #searchResults {
+            min-height: 100px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 10px;
+            border: 2px dashed #e2e8f0;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .result-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        
+        .result-content {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 18px;
+        }
+        
+        .error {
+            color: #e53e3e;
+            background: #fff5f5;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e53e3e;
+        }
+        
+        .no-results {
+            color: #a0aec0;
+            text-align: center;
+            padding: 30px;
+            font-style: italic;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🎉 欢迎来到我的网站！</h1>
-            <p class="subtitle">部署在 Netlify，完全免费</p>
-        </header>
-        
-        <main>
-            <div class="card">
-                <h2>🚀 特性介绍</h2>
-                <ul>
-                    <li>✅ 全球CDN加速</li>
-                    <li>✅ 免费HTTPS证书</li>
-                    <li>✅ 自动部署更新</li>
-                    <li>✅ 自定义域名支持</li>
-                </ul>
+        <div class="card">
+            <h2>🔍 测试搜索API</h2>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="请输入要搜索的内容...">
+                <button onclick="search()">搜索</button>
             </div>
-            
-            <div class="card">
-                <h2>📊 网站信息</h2>
-                <div id="info">
-                    <p>加载中...</p>
-                </div>
+            <div id="searchResults">
+                <div class="no-results">搜索结果将显示在这里</div>
             </div>
-            
-            <div class="card">
-                <h2>🔍 测试搜索API</h2>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="输入搜索词...">
-                    <button onclick="search()">搜索</button>
-                </div>
-                <div id="searchResults"></div>
-            </div>
-        </main>
-        
-        <footer>
-            <p>© 2024 我的网站 | 托管于 <a href="https://netlify.com" target="_blank">Netlify</a></p>
-            <p id="siteUrl"></p>
-        </footer>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        async function search() {
+            const input = document.getElementById('searchInput');
+            const query = input.value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (!query) {
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        请输入搜索关键词
+                    </div>
+                `;
+                return;
+            }
+            
+            // 显示加载状态
+            resultsDiv.innerHTML = `
+                <div class="loading">
+                    🔍 正在搜索 "${query}"...
+                </div>
+            `;
+            
+            try {
+                // 这里使用模拟的API响应
+                // 在实际使用中，你可以替换为真实的API端点
+                await simulateSearch(query);
+                
+                // 模拟的搜索结果数据
+                const mockResults = [
+                    {
+                        title: "搜索结果 1",
+                        content: `这是关于"${query}"的第一个搜索结果。这是一个示例内容，展示搜索结果的基本格式。`
+                    },
+                    {
+                        title: "搜索结果 2", 
+                        content: `这是第二个搜索结果，同样包含关键词"${query}"。搜索结果可以包含详细描述信息。`
+                    },
+                    {
+                        title: "搜索结果 3",
+                        content: `第三个搜索结果，展示不同的信息片段。搜索关键词"${query}"在这里被提及。`
+                    }
+                ];
+                
+                // 渲染搜索结果
+                if (mockResults.length > 0) {
+                    let html = '';
+                    mockResults.forEach(result => {
+                        html += `
+                            <div class="result-item">
+                                <div class="result-title">${result.title}</div>
+                                <div class="result-content">${result.content}</div>
+                            </div>
+                        `;
+                    });
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="no-results">
+                            没有找到关于"${query}"的结果
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        搜索失败: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 模拟API请求的延迟
+        function simulateSearch(query) {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    console.log(`搜索关键词: ${query}`);
+                    resolve();
+                }, 800);
+            });
+        }
+        
+        // 添加回车键搜索支持
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                search();
+            }
+        });
+    </script>
 </body>
 </html>
