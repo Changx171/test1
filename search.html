@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产业链三泳道展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header .search-box {
+            display: inline-block;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .header input {
+            border: none;
+            outline: none;
+            font-size: 18px;
+            padding: 10px;
+            width: 300px;
+        }
+        
+        .header button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        
+        .header button:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .three-lanes-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .lane {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            min-height: 500px;
+        }
+        
+        .lane:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+        
+        .lane h3 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            margin: 0;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .center-lane {
+            flex: 1.2;
+            border: 3px solid #667eea;
+        }
+        
+        .center-lane h3 {
+            background: linear-gradient(135deg, #4c51bf 0%, #6b46c1 100%);
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .lane-content {
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .level-group {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .level-group h4 {
+            color: #666;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 16px;
+        }
+        
+        .node-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .node-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .node-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .node-info {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .node-desc {
+            color: #888;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .node-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        
+        .node-tags span {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .center-node {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 10px;
+            border: 2px dashed #667eea;
+        }
+        
+        .center-node .node-name {
+            font-size: 24px;
+            color: #4c51bf;
+            margin-bottom: 15px;
+        }
+        
+        .center-node .node-info {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .center-node .node-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .center-node .node-stats span {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .connection-lines {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .highlighted {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3); }
+            50% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.6); }
+            100% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>产业链三泳道展示系统</h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="输入产品名称，如：新能源汽车" value="新能源汽车">
+                <button onclick="searchSupplyChain()">搜索产业链</button>
+            </div>
+        </div>
+        
+        <div id="loading" class="loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>正在查询产业链数据...</p>
+        </div>
+        
+        <div id="emptyState" class="empty-state">
+            <h3>👆 请输入产品名称搜索</h3>
+            <p>将展示产品的完整上下游产业链，按三泳道布局</p>
+        </div>
+        
+        <div id="threeLanes" class="three-lanes-container" style="display: none;">
+            <!-- 左侧：上游供应链 -->
+            <div class="lane upstream-lane">
+                <h3 id="upstreamTitle">【上游供应链】</h3>
+                <div class="lane-content" id="upstreamContent">
+                    <!-- 动态加载上游数据 -->
+                </div>
+            </div>
+            
+            <!-- 中间：中心节点 -->
+            <div class="lane center-lane highlighted">
+                <h3 id="centerTitle">【中心产品】</h3>
+                <div class="lane-content" id="centerContent">
+                    <!-- 动态加载中心节点数据 -->
+                </div>
+            </div>
+            
+            <!-- 右侧：下游服务 -->
+            <div class="lane downstream-lane">
+                <h3 id="downstreamTitle">【下游应用与服务】</h3>
+                <div class="lane-content" id="downstreamContent">
+                    <!-- 动态加载下游数据 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟的ES数据 - 你之前查询的结果
+        const mockData = {
+            "took": 2,
+            "timed_out": false,
+            "hits": {
+                "total": {
+                    "value": 9,
+                    "relation": "eq"
+                },
+                "hits": [
+                    {
+                        "_source": {
+                            "id": "chain_001",
+                            "name": "锂矿石",
+                            "node_role": "raw_material",
+                            "industry_level": -3,
+                            "description": "新能源汽车电池最上游原材料",
+                            "basic_attrs": {
+                                "unit": "吨",
+                                "price": 280000,
+                                "price_trend": "上涨",
+                                "supply_risk": "高"
+                            },
+                            "upstream_ids": [],
+                            "downstream_ids": ["mat_001", "mat_003"],
+                            "tags": ["关键材料", "稀缺资源", "上游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "mat_003",
+                            "name": "石墨负极材料",
+                            "node_role": "material_processing",
+                            "industry_level": -2,
+                            "description": "锂电池负极主要材料",
+                            "basic_attrs": {
+                                "unit": "吨",
+                                "price": 45000,
+                                "types": ["天然石墨", "人造石墨"]
+                            },
+                            "upstream_ids": [],
+                            "downstream_ids": ["comp_001"],
+                            "tags": ["负极材料", "加工环节", "中上游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "mat_001",
+                            "name": "正极材料",
+                            "node_role": "material_processing",
+                            "industry_level": -2,
+                            "description": "锂电池核心材料，包括三元材料和磷酸铁锂",
+                            "basic_attrs": {
+                                "unit": "吨",
+                                "price": 180000,
+                                "technology": "NCM/NCA/LFP"
+                            },
+                            "upstream_ids": ["chain_001"],
+                            "downstream_ids": ["comp_001"],
+                            "tags": ["电池材料", "加工环节", "中上游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "comp_001",
+                            "name": "动力电池",
+                            "node_role": "component",
+                            "industry_level": -1,
+                            "description": "新能源汽车的'心脏'，决定车辆续航和性能",
+                            "basic_attrs": {
+                                "unit": "套",
+                                "price": 8000,
+                                "energy_density": "180-300Wh/kg",
+                                "cycle_life": "2000次"
+                            },
+                            "upstream_ids": ["mat_001", "mat_003"],
+                            "downstream_ids": ["prod_001"],
+                            "tags": ["核心部件", "三电系统", "中游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "comp_002",
+                            "name": "驱动电机",
+                            "node_role": "component",
+                            "industry_level": -1,
+                            "description": "将电能转化为机械能，驱动车辆行驶",
+                            "basic_attrs": {
+                                "unit": "台",
+                                "price": 3000,
+                                "efficiency": "95%以上",
+                                "type": "永磁同步电机"
+                            },
+                            "upstream_ids": [],
+                            "downstream_ids": ["prod_001"],
+                            "tags": ["三电系统", "核心部件", "中游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "prod_001",
+                            "name": "新能源汽车",
+                            "node_role": "finished_product",
+                            "industry_level": 0,
+                            "description": "以电力为主要驱动力的汽车，包括纯电动、插电混动等",
+                            "basic_attrs": {
+                                "unit": "辆",
+                                "price": 200000,
+                                "types": ["BEV", "PHEV", "FCEV"],
+                                "avg_range": "400-700公里"
+                            },
+                            "upstream_ids": ["comp_001", "comp_002"],
+                            "downstream_ids": ["serv_001", "serv_002", "serv_003"],
+                            "tags": ["终端产品", "中心节点", "下游应用"],
+                            "is_center": true
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "serv_001",
+                            "name": "充电服务",
+                            "node_role": "service",
+                            "industry_level": 1,
+                            "description": "为新能源汽车提供充电基础设施和运营服务",
+                            "basic_attrs": {
+                                "service_type": "基础设施运营",
+                                "charging_speed": ["快充", "超充", "慢充"],
+                                "payment_method": ["APP扫码", "充电卡"]
+                            },
+                            "upstream_ids": ["prod_001"],
+                            "downstream_ids": [],
+                            "tags": ["后市场服务", "基础设施", "下游"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "serv_003",
+                            "name": "智能网联服务",
+                            "node_role": "service",
+                            "industry_level": 1,
+                            "description": "为新能源汽车提供智能驾驶、车联网、OTA升级等服务",
+                            "basic_attrs": {
+                                "service_type": "软件服务",
+                                "connectivity": "5G/V2X",
+                                "features": ["自动驾驶", "智能座舱", "远程控制"]
+                            },
+                            "upstream_ids": ["prod_001"],
+                            "downstream_ids": [],
+                            "tags": ["软件服务", "智能化", "增值服务"]
+                        }
+                    },
+                    {
+                        "_source": {
+                            "id": "serv_002",
+                            "name": "电池回收",
+                            "node_role": "service",
+                            "industry_level": 1,
+                            "description": "回收退役动力电池，进行梯次利用或材料再生",
+                            "basic_attrs": {
+                                "recovery_rate": "85%以上",
+                                "value_recovery": "材料价值70%",
+                                "technology": "物理拆解/湿法冶金"
+                            },
+                            "upstream_ids": ["prod_001"],
+                            "downstream_ids": [],
+                            "tags": ["环保产业", "资源回收", "循环经济"]
+                        }
+                    }
+                ]
+            }
+        };
+
+        // 格式化三泳道数据
+        function formatToThreeLanes(esResult) {
+            const hits = esResult.hits.hits;
+            
+            const lanes = {
+                upstream: [],  // 上游
+                center: [],    // 中心
+                downstream: [] // 下游
+            };
+            
+            // 按层级分组上游数据
+            const upstreamByLevel = {
+                '-3': { name: '原材料', nodes: [] },
+                '-2': { name: '材料加工', nodes: [] },
+                '-1': { name: '核心零部件', nodes: [] }
+            };
+            
+            hits.forEach(hit => {
+                const node = hit._source;
+                
+                if (node.industry_level < 0) {
+                    // 上游：原材料和零部件
+                    const level = node.industry_level.toString();
+                    if (upstreamByLevel[level]) {
+                        upstreamByLevel[level].nodes.push({
+                            id: node.id,
+                            name: node.name,
+                            type: node.node_role,
+                            level: node.industry_level,
+                            price: node.basic_attrs?.price,
+                            unit: node.basic_attrs?.unit,
+                            description: node.description,
+                            tags: node.tags
+                        });
+                    }
+                } else if (node.industry_level === 0) {
+                    // 中心：成品
+                    lanes.center.push({
+                        id: node.id,
+                        name: node.name,
+                        type: node.node_role,
+                        price: node.basic_attrs?.price,
+                        unit: node.basic_attrs?.unit,
+                        description: node.description,
+                        is_highlighted: true,
+                        upstream_count: node.upstream_ids?.length || 0,
+                        downstream_count: node.downstream_ids?.length || 0,
+                        tags: node.tags
+                    });
+                } else {
+                    // 下游：服务
+                    lanes.downstream.push({
+                        id: node.id,
+                        name: node.name,
+                        type: node.node_role,
+                        level: node.industry_level,
+                        description: node.description,
+                        tags: node.tags
+                    });
+                }
+            });
+            
+            // 将分组后的上游数据添加到lanes
+            Object.keys(upstreamByLevel).sort((a, b) => a - b).forEach(level => {
+                if (upstreamByLevel[level].nodes.length > 0) {
+                    lanes.upstream.push({
+                        level: parseInt(level),
+                        levelName: upstreamByLevel[level].name,
+                        nodes: upstreamByLevel[level].nodes
+                    });
+                }
+            });
+            
+            return lanes;
+        }
+
+        // 渲染三泳道
+        function renderThreeLanes(lanes) {
+            // 渲染上游
+            const upstreamContent = document.getElementById('upstreamContent');
+            upstreamContent.innerHTML = '';
+            
+            lanes.upstream.forEach(levelGroup => {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'level-group';
+                levelDiv.innerHTML = `
+                    <h4>${levelGroup.levelName} (${levelGroup.level}级)</h4>
+                `;
+                
+                levelGroup.nodes.forEach(node => {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = 'node-item';
+                    nodeDiv.innerHTML = `
+                        <div class="node-name">${node.name}</div>
+                        ${node.price ? `<div class="node-info">价格: ${formatPrice(node.price)}${node.unit ? '/' + node.unit : ''}</div>` : ''}
+                        ${node.description ? `<div class="node-desc">${node.description}</div>` : ''}
+                        ${node.tags && node.tags.length > 0 ? `
+                            <div class="node-tags">
+                                ${node.tags.map(tag => `<span>${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    `;
+                    levelDiv.appendChild(nodeDiv);
+                });
+                
+                upstreamContent.appendChild(levelDiv);
+            });
+
+            // 渲染中心
+            const centerContent = document.getElementById('centerContent');
+            centerContent.innerHTML = '';
+            
+            if (lanes.center.length > 0) {
+                const centerNode = lanes.center[0];
+                const centerDiv = document.createElement('div');
+                centerDiv.className = 'center-node';
+                centerDiv.innerHTML = `
+                    <div class="node-name">${centerNode.name}</div>
+                    ${centerNode.price ? `<div class="node-info">价格: ${formatPrice(centerNode.price)}${centerNode.unit ? '/' + centerNode.unit : ''}</div>` : ''}
+                    ${centerNode.description ? `<div class="node-desc">${centerNode.description}</div>` : ''}
+                    ${centerNode.tags && centerNode.tags.length > 0 ? `
+                        <div class="node-tags">
+                            ${centerNode.tags.map(tag => `<span>${tag}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="node-stats">
+                        <span>上游关联: ${centerNode.upstream_count}个节点</span>
+                        <span>下游关联: ${centerNode.downstream_count}个节点</span>
+                    </div>
+                `;
+                centerContent.appendChild(centerDiv);
+                
+                // 更新标题
+                document.getElementById('centerTitle').textContent = `【${centerNode.name}】`;
+            }
+
+            // 渲染下游
+            const downstreamContent = document.getElementById('downstreamContent');
+            downstreamContent.innerHTML = '';
+            
+            if (lanes.downstream.length > 0) {
+                const levelDiv = document.createElement('div');
+                levelDiv.className = 'level-group';
+                levelDiv.innerHTML = `<h4>后市场服务 (+1级)</h4>`;
+                
+                lanes.downstream.forEach(node => {
+                    const nodeDiv = document.createElement('div');
+                    nodeDiv.className = 'node-item';
+                    nodeDiv.innerHTML = `
+                        <div class="node-name">${node.name}</div>
+                        ${node.description ? `<div class="node-desc">${node.description}</div>` : ''}
+                        ${node.tags && node.tags.length > 0 ? `
+                            <div class="node-tags">
+                                ${node.tags.map(tag => `<span>${tag}</span>`).join('')}
+                            </div>
+                        ` : ''}
+                    `;
+                    levelDiv.appendChild(nodeDiv);
+                });
+                
+                downstreamContent.appendChild(levelDiv);
+            }
+        }
+
+        // 格式化价格
+        function formatPrice(price) {
+            if (price >= 10000) {
+                return (price / 10000).toLocaleString() + '万';
+            }
+            return price.toLocaleString();
+        }
+
+        // 搜索产业链
+        function searchSupplyChain() {
+            const searchInput = document.getElementById('searchInput');
+            const productName = searchInput.value.trim();
+            
+            if (!productName) {
+                alert('请输入产品名称');
+                return;
+            }
+            
+            // 显示加载中
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('threeLanes').style.display = 'none';
+            
+            // 模拟API请求延迟
+            setTimeout(() => {
+                // 这里应该调用真实的ES API
+                // 现在先用模拟数据
+                
+                // 检查是否有匹配的中心节点
+                const centerNode = mockData.hits.hits.find(hit => 
+                    hit._source.name.includes(productName) && 
+                    hit._source.industry_level === 0
+                );
+                
+                if (centerNode) {
+                    // 格式化数据
+                    const lanes = formatToThreeLanes(mockData);
+                    
+                    // 渲染
+                    renderThreeLanes(lanes);
+                    
+                    // 显示结果
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('threeLanes').style.display = 'flex';
+                    
+                    // 更新标题
+                    document.getElementById('upstreamTitle').textContent = '【上游供应链】';
+                    document.getElementById('downstreamTitle').textContent = '【下游应用与服务】';
+                } else {
+                    // 没有找到匹配的产品
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.getElementById('emptyState').innerHTML = `
+                        <h3>😕 未找到"${productName}"的产业链数据</h3>
+                        <p>请尝试搜索其他产品，如：新能源汽车</p>
+                    `;
+                }
+            }, 1000); // 模拟1秒延迟
+        }
+
+        // 页面加载时自动搜索
+        document.addEventListener('DOMContentLoaded', function() {
+            // 自动搜索默认值
+            searchSupplyChain();
+        });
+
+        // 支持按回车键搜索
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchSupplyChain();
+            }
+        });
+    </script>
+</body>
+</html>
