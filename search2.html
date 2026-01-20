@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工业品供应链搜索演示</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* 头部 */
+        .header {
+            background: linear-gradient(90deg, #1a2980 0%, #26d0ce 100%);
+            color: white;
+            padding: 30px 40px;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .header h1 i {
+            font-size: 2.2rem;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        /* 搜索框 */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-box button {
+            padding: 15px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-box button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        /* 快速搜索示例 */
+        .quick-search {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .quick-search .chip {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .quick-search .chip:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* 三泳道Tab */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            padding: 0 40px;
+        }
+        
+        .tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tab.active {
+            color: #1a2980;
+            border-bottom-color: #1a2980;
+            background: white;
+        }
+        
+        .tab-count {
+            background: #e9ecef;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .tab.active .tab-count {
+            background: #1a2980;
+            color: white;
+        }
+        
+        /* 内容区域 */
+        .content {
+            padding: 40px;
+            min-height: 500px;
+        }
+        
+        .tab-pane {
+            display: none;
+        }
+        
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 商品卡片 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .product-header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .product-type {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .product-brand {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+        
+        .product-body {
+            padding: 20px;
+        }
+        
+        .product-price {
+            color: #ff6b6b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .product-specs {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        /* 树形结构 */
+        .tree-view {
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-width: 800px;
+        }
+        
+        .tree-node {
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .tree-header {
+            padding: 12px 20px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s;
+        }
+        
+        .tree-header:hover {
+            border-color: #1a2980;
+            box-shadow: 0 5px 15px rgba(26, 41, 128, 0.1);
+        }
+        
+        .tree-icon {
+            color: #1a2980;
+            transition: transform 0.3s;
+        }
+        
+        .tree-header.expanded .tree-icon {
+            transform: rotate(90deg);
+        }
+        
+        .tree-name {
+            font-weight: 600;
+            color: #212529;
+        }
+        
+        .tree-count {
+            background: #e9ecef;
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        
+        .tree-children {
+            margin-left: 40px;
+            margin-top: 10px;
+            border-left: 2px dashed #dee2e6;
+            padding-left: 20px;
+            display: none;
+        }
+        
+        /* 供应链可视化 */
+        .supply-chain {
+            position: relative;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .chain-node {
+            position: absolute;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 150px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .chain-node:hover {
+            border-color: #1a2980;
+            transform: scale(1.05);
+        }
+        
+        .chain-node.product {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .chain-node.material {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .chain-node.process {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        /* 技术架构图 */
+        .architecture {
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            border-radius: 15px;
+            color: white;
+        }
+        
+        .architecture h3 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tech-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 150px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .tech-item i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tabs {
+                padding: 0;
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1><i class="fas fa-industry"></i> 工业品供应链智能搜索</h1>
+            <p class="tagline">从成品溯源到原料，一图看懂完整制造链</p>
+            
+            <!-- 搜索框 -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索商品、原材料、加工服务..." value="汽车轮胎">
+                <button id="searchBtn">
+                    <i class="fas fa-search"></i> 智能搜索
+                </button>
+            </div>
+            
+            <!-- 快速搜索 -->
+            <div class="quick-search">
+                <span class="chip" data-query="汽车轮胎">🚗 汽车轮胎</span>
+                <span class="chip" data-query="天然橡胶">🌿 天然橡胶</span>
+                <span class="chip" data-query="香奈儿香水">💄 香奈儿香水</span>
+                <span class="chip" data-query="玻璃瓶">🍶 玻璃瓶</span>
+                <span class="chip" data-query="混炼工艺">⚙️ 混炼工艺</span>
+            </div>
+        </div>
+        
+        <!-- 三泳道Tab -->
+        <div class="tabs">
+            <div class="tab active" data-tab="products">
+                <i class="fas fa-box"></i>
+                <span>成品商品</span>
+                <span class="tab-count">850</span>
+            </div>
+            <div class="tab" data-tab="materials">
+                <i class="fas fa-atom"></i>
+                <span>原材料</span>
+                <span class="tab-count">156</span>
+            </div>
+            <div class="tab" data-tab="processes">
+                <i class="fas fa-cogs"></i>
+                <span>加工服务</span>
+                <span class="tab-count">73</span>
+            </div>
+            <div class="tab" data-tab="chain">
+                <i class="fas fa-project-diagram"></i>
+                <span>供应链图谱</span>
+                <span class="tab-count">可视化</span>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content">
+            <!-- 成品商品泳道 -->
+            <div class="tab-pane active" id="products-pane">
+                <h2><i class="fas fa-box"></i> 汽车轮胎相关商品</h2>
+                <p class="tagline">找到850个相关商品，默认按相关性排序</p>
+                
+                <div class="product-grid" id="products-grid">
+                    <!-- 商品卡片动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 原材料泳道 -->
+            <div class="tab-pane" id="materials-pane">
+                <h2><i class="fas fa-atom"></i> 轮胎原材料供应链</h2>
+                <p class="tagline">点击展开查看完整的原材料树状结构</p>
+                
+                <div class="tree-view" id="materials-tree">
+                    <!-- 树形结构动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 加工服务泳道 -->
+            <div class="tab-pane" id="processes-pane">
+                <h2><i class="fas fa-cogs"></i> 轮胎加工工艺与服务商</h2>
+                <p class="tagline">73家服务商提供专业加工服务</p>
+                
+                <div class="product-grid" id="processes-grid">
+                    <!-- 加工服务卡片动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 供应链图谱泳道 -->
+            <div class="tab-pane" id="chain-pane">
+                <h2><i class="fas fa-project-diagram"></i> 供应链关系图谱</h2>
+                <p class="tagline">可视化展示完整的供应链网络</p>
+                
+                <div class="supply-chain" id="supply-chain">
+                    <!-- 供应链图谱可视化 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 技术架构展示 -->
+        <div class="architecture">
+            <h3><i class="fas fa-layer-group"></i> 技术架构说明</h3>
+            <p>本演示采用混合技术架构，结合关系数据库与图数据库的优势：</p>
+            
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <i class="fab fa-react"></i>
+                    <h4>React前端</h4>
+                    <p>交互式UI</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-database"></i>
+                    <h4>MySQL</h4>
+                    <p>商品基础数据</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-project-diagram"></i>
+                    <h4>Nebula Graph</h4>
+                    <p>供应链关系图谱</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-search"></i>
+                    <h4>Elasticsearch</h4>
+                    <p>智能搜索</p>
+                </div>
+                <div class="tech-item">
+                    <i class="fas fa-brain"></i>
+                    <h4>AI算法</h4>
+                    <p>智能推荐</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const mockData = {
+            "汽车轮胎": {
+                products: [
+                    { id: "P001", name: "米其林 Primacy 4 205/55R16", type: "成品", brand: "米其林", price: "¥650", specs: "静音舒适型，湿地抓地力强" },
+                    { id: "P002", name: "普利司通 Turanza T005 215/55R17", type: "成品", brand: "普利司通", price: "¥580", specs: "均衡性能，耐磨耐用" },
+                    { id: "P003", name: "德国马牌 CC6 195/65R15", type: "成品", brand: "德国马牌", price: "¥520", specs: "静音技术，舒适性好" },
+                    { id: "P004", name: "朝阳轮胎 SA37 205/55R16", type: "成品", brand: "朝阳", price: "¥380", specs: "性价比高，国货精品" }
+                ],
+                materials: [
+                    { name: "橡胶类", count: 42, children: [
+                        { name: "天然橡胶", query: "天然橡胶", count: 25 },
+                        { name: "合成橡胶", query: "合成橡胶", count: 17 }
+                    ]},
+                    { name: "骨架材料类", count: 28, children: [
+                        { name: "钢丝帘线", query: "钢丝帘线", count: 18 },
+                        { name: "聚酯帘线", query: "聚酯帘线", count: 10 }
+                    ]},
+                    { name: "助剂类", count: 15, children: [
+                        { name: "炭黑", query: "炭黑", count: 8 },
+                        { name: "硫化剂", query: "硫化剂", count: 7 }
+                    ]}
+                ],
+                processes: [
+                    { id: "S001", name: "混炼工艺", type: "加工服务", vendorCount: 35, desc: "将橡胶与配合剂均匀混合" },
+                    { id: "S002", name: "硫化工艺", type: "加工服务", vendorCount: 38, desc: "使橡胶获得弹性强度" },
+                    { id: "S003", name: "压延工艺", type: "加工服务", vendorCount: 22, desc: "将胶料压成一定厚度" },
+                    { id: "S004", name: "成型工艺", type: "加工服务", vendorCount: 40, desc: "将部件组合成生胎" }
+                ]
+            },
+            "天然橡胶": {
+                products: [
+                    { id: "R001", name: "泰国STR20天然橡胶", type: "原料", brand: "泰国橡胶", price: "¥12,000/吨", specs: "标准胶，杂质少" },
+                    { id: "R002", name: "马来西亚SMR20天然橡胶", type: "原料", brand: "马来西亚橡胶", price: "¥11,800/吨", specs: "粘度稳定" }
+                ],
+                materials: [
+                    { name: "上游原料", count: 5, children: [
+                        { name: "橡胶树胶乳", query: "橡胶树胶乳", count: 5 }
+                    ]}
+                ],
+                processes: [
+                    { id: "P001", name: "凝固工艺", type: "加工服务", vendorCount: 12, desc: "使胶乳凝固" },
+                    { id: "P002", name: "造粒工艺", type: "加工服务", vendorCount: 8, desc: "将凝固胶块造粒" },
+                    { id: "P003", name: "干燥工艺", type: "加工服务", vendorCount: 15, desc: "去除水分" }
+                ]
+            }
+        };
+
+        // 当前搜索词
+        let currentQuery = "汽车轮胎";
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            renderMaterials();
+            renderProcesses();
+            renderSupplyChain();
+            
+            // 绑定事件
+            bindEvents();
+        });
+
+        // 绑定事件
+        function bindEvents() {
+            // Tab切换
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // 搜索按钮
+            document.getElementById('searchBtn').addEventListener('click', performSearch);
+            
+            // 搜索框回车
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') performSearch();
+            });
+
+            // 快速搜索
+            document.querySelectorAll('.quick-search .chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    const query = this.getAttribute('data-query');
+                    document.getElementById('searchInput').value = query;
+                    performSearch();
+                });
+            });
+        }
+
+        // 切换Tab
+        function switchTab(tabId) {
+            // 更新Tab样式
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.tab[data-tab="${tabId}"]`).classList.add('active');
+            
+            // 显示对应内容
+            document.querySelectorAll('.tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            document.getElementById(`${tabId}-pane`).classList.add('active');
+            
+            // 如果是供应链图谱，重新渲染
+            if (tabId === 'chain') {
+                renderSupplyChain();
+            }
+        }
+
+        // 执行搜索
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            
+            currentQuery = query;
+            
+            // 更新标题
+            document.querySelectorAll('.tab-pane h2').forEach(h2 => {
+                const icon = h2.innerHTML.split('</i>')[0] + '</i>';
+                h2.innerHTML = `${icon} ${query}相关结果`;
+            });
+            
+            // 模拟搜索过程
+            document.getElementById('searchBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 搜索中...';
+            document.getElementById('searchBtn').disabled = true;
+            
+            // 模拟网络延迟
+            setTimeout(() => {
+                // 根据查询词获取数据（模拟）
+                const data = mockData[query] || mockData["汽车轮胎"];
+                
+                // 更新计数
+                document.querySelector('.tab[data-tab="products"] .tab-count').textContent = 
+                    data.products.length * 200; // 模拟放大
+                document.querySelector('.tab[data-tab="materials"] .tab-count').textContent = 
+                    data.materials.reduce((sum, item) => sum + item.count, 0);
+                document.querySelector('.tab[data-tab="processes"] .tab-count').textContent = 
+                    data.processes.reduce((sum, item) => sum + item.vendorCount, 0);
+                
+                // 重新渲染
+                renderProducts(data.products);
+                renderMaterials(data.materials);
+                renderProcesses(data.processes);
+                renderSupplyChain();
+                
+                // 恢复按钮
+                document.getElementById('searchBtn').innerHTML = '<i class="fas fa-search"></i> 智能搜索';
+                document.getElementById('searchBtn').disabled = false;
+                
+                // 切换到商品Tab
+                switchTab('products');
+            }, 800);
+        }
+
+        // 渲染商品列表
+        function renderProducts(products = null) {
+            const data = products || mockData[currentQuery].products;
+            const container = document.getElementById('products-grid');
+            
+            container.innerHTML = data.map(item => `
+                <div class="product-card" onclick="showDetail('${item.id}')">
+                    <div class="product-header">
+                        <div class="product-type">${item.type}</div>
+                        <div class="product-name">${item.name}</div>
+                        <div class="product-brand">${item.brand}</div>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-price">${item.price}</div>
+                        <div class="product-specs">${item.specs}</div>
+                        <div style="margin-top: 15px; color: #6c757d; font-size: 0.9rem;">
+                            <i class="fas fa-tags"></i> 点击查看供应链详情
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染原材料树
+        function renderMaterials(materials = null) {
+            const data = materials || mockData[currentQuery].materials;
+            const container = document.getElementById('materials-tree');
+            
+            container.innerHTML = buildTreeHTML(data);
+            
+            // 绑定树节点点击事件
+            setTimeout(() => {
+                document.querySelectorAll('.tree-header').forEach(header => {
+                    header.addEventListener('click', function() {
+                        this.classList.toggle('expanded');
+                        const children = this.parentElement.querySelector('.tree-children');
+                        if (children) {
+                            children.style.display = 
+                                children.style.display === 'block' ? 'none' : 'block';
+                        }
+                    });
+                });
+            }, 100);
+        }
+
+        // 构建树HTML
+        function buildTreeHTML(nodes, level = 0) {
+            return nodes.map(node => `
+                <div class="tree-node">
+                    <div class="tree-header ${node.children ? 'has-children' : ''}">
+                        <i class="fas fa-caret-right tree-icon"></i>
+                        <span class="tree-name">${node.name}</span>
+                        <span class="tree-count">${node.count}</span>
+                    </div>
+                    ${node.children ? `
+                        <div class="tree-children" style="display: none;">
+                            ${buildTreeHTML(node.children, level + 1)}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        // 渲染加工服务
+        function renderProcesses(processes = null) {
+            const data = processes || mockData[currentQuery].processes;
+            const container = document.getElementById('processes-grid');
+            
+            container.innerHTML = data.map(item => `
+                <div class="product-card">
+                    <div class="product-header">
+                        <div class="product-type">${item.type}</div>
+                        <div class="product-name">${item.name}</div>
+                        <div class="product-brand">${item.vendorCount}家服务商</div>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-specs">${item.desc}</div>
+                        <div style="margin-top: 15px; padding: 10px; background: #e9ecef; border-radius: 8px;">
+                            <i class="fas fa-users"></i> 已服务客户：${Math.floor(item.vendorCount * 15)}家
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 渲染供应链图谱
+        function renderSupplyChain() {
+            const container = document.getElementById('supply-chain');
+            
+            // 清空容器
+            container.innerHTML = '';
+            
+            // 根据当前查询渲染不同的供应链图
+            if (currentQuery === "汽车轮胎") {
+                renderTireSupplyChain(container);
+            } else if (currentQuery === "天然橡胶") {
+                renderRubberSupplyChain(container);
+            } else {
+                renderDefaultSupplyChain(container);
+            }
+        }
+
+        // 渲染轮胎供应链
+        function renderTireSupplyChain(container) {
+            const nodes = [
+                { id: 'tire', type: 'product', name: '汽车轮胎', x: 50, y: 50, width: 150 },
+                { id: 'rubber', type: 'material', name: '天然橡胶', x: 20, y: 150, width: 130 },
+                { id: 'steel', type: 'material', name: '钢丝帘线', x: 80, y: 150, width: 130 },
+                { id: 'carbon', type: 'material', name: '炭黑', x: 140, y: 150, width: 130 },
+                { id: 'tree', type: 'material', name: '橡胶树', x: 10, y: 250, width: 120 },
+                { id: 'iron', type: 'material', name: '铁矿石', x: 70, y: 250, width: 120 },
+                { id: 'oil', type: 'material', name: '石油', x: 130, y: 250, width: 120 }
+            ];
+            
+            nodes.forEach(node => {
+                const el = document.createElement('div');
+                el.className = `chain-node ${node.type}`;
+                el.style.left = `${node.x}px`;
+                el.style.top = `${node.y}px`;
+                el.style.width = `${node.width}px`;
+                el.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 5px;">${node.name}</div>
+                    <div style="font-size: 0.9rem; opacity: 0.9;">
+                        ${node.type === 'product' ? '成品' : 
+                          node.type === 'material' ? '原材料' : '加工'}
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+            
+            // 添加连接线（通过CSS伪元素）
+            container.innerHTML += `
+                <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                    <!-- 轮胎到原料的连接 -->
+                    <line x1="125" y1="100" x2="85" y2="150" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5" />
+                    <line x1="125" y1="100" x2="145" y2="150" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5" />
+                    <line x1="125" y1="100" x2="205" y2="150" stroke="#667eea" stroke-width="2" stroke-dasharray="5,5" />
+                    
+                    <!-- 原料到更上游的连接 -->
+                    <line x1="85" y1="200" x2="70" y2="250" stroke="#f093fb" stroke-width="2" />
+                    <line x1="145" y1="200" x2="130" y2="250" stroke="#f093fb" stroke-width="2" />
+                    <line x1="205" y1="200" x2="190" y2="250" stroke="#f093fb" stroke-width="2" />
+                </svg>
+            `;
+        }
+
+        // 渲染橡胶供应链
+        function renderRubberSupplyChain(container) {
+            container.innerHTML = `
+                <div style="padding: 40px; text-align: center;">
+                    <div style="font-size: 1.5rem; margin-bottom: 20px; color: #1a2980;">
+                        <i class="fas fa-project-diagram"></i> 天然橡胶供应链图谱
+                    </div>
+                    <div style="display: inline-block; text-align: left; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                            <div style="width: 20px; height: 20px; background: #667eea; border-radius: 50%; margin-right: 10px;"></div>
+                            <div>橡胶树种植 → 割胶收集乳胶</div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 20px; margin-left: 30px;">
+                            <div style="width: 20px; height: 20px; background: #f093fb; border-radius: 50%; margin-right: 10px;"></div>
+                            <div>乳胶凝固 → 造粒 → 干燥 → 包装</div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-bottom: 20px; margin-left: 60px;">
+                            <div style="width: 20px; height: 20px; background: #4facfe; border-radius: 50%; margin-right: 10px;"></div>
+                            <div>天然橡胶STR20 → 运输到轮胎工厂</div>
+                        </div>
+                        <div style="display: flex; align-items: center; margin-left: 90px;">
+                            <div style="width: 20px; height: 20px; background: #43e97b; border-radius: 50%; margin-right: 10px;"></div>
+                            <div>混炼工艺 → 轮胎成型 → 成品轮胎</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 30px; color: #6c757d;">
+                        <i class="fas fa-info-circle"></i> 这是基于图数据库(Nebula)实时生成的供应链关系
+                    </div>
+                </div>
+            `;
+        }
+
+        // 渲染默认供应链
+        function renderDefaultSupplyChain(container) {
+            container.innerHTML = `
+                <div style="padding: 60px; text-align: center; color: #6c757d;">
+                    <i class="fas fa-network-wired" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <div style="font-size: 1.5rem; margin-bottom: 15px;">供应链关系可视化</div>
+                    <p>搜索特定商品（如"汽车轮胎"、"天然橡胶"）查看完整的供应链图谱</p>
+                    <p>基于图数据库技术，实时展示多层级供应关系</p>
+                </div>
+            `;
+        }
+
+        // 显示商品详情（模拟）
+        function showDetail(productId) {
+            alert(`查看商品详情: ${productId}\n\n这是演示功能，实际系统会：\n1. 显示商品完整信息\n2. 展示供应链图谱\n3. 推荐相关商品\n4. 提供供应商联系方式`);
+        }
+    </script>
+</body>
+</html>
