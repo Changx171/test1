@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>光仔 - 你的伙伴</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a2a3a, #0d1b2a);
+            color: #e0f2fe;
+            font-family: 'Segoe UI', sans-serif;
+            text-align: center;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #7dd3fc;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        /* 伙伴形象 - 核心 */
+        .buddy {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            position: relative;
+        }
+        
+        /* 脸 */
+        .face {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 30% 40%, #bae6fd, #7dd3fc);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 
+                0 0 40px rgba(125, 211, 252, 0.5),
+                inset 0 -10px 20px rgba(255,255,255,0.2);
+        }
+        
+        /* 眼睛 - 会动 */
+        .eyes {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .eye {
+            width: 30px;
+            height: 45px;
+            background: white;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .pupil {
+            width: 16px;
+            height: 16px;
+            background: #1e3a8a;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.2s;
+        }
+        
+        /* 嘴巴 - 有表情 */
+        .mouth {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 20px;
+            background: #fda4af;
+            border-radius: 0 0 30px 30px;
+            transition: all 0.5s;
+        }
+        
+        /* 不同表情 */
+        .face.normal .mouth {
+            width: 60px;
+            height: 15px;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .face.smile .mouth {
+            width: 70px;
+            height: 25px;
+            background: #fb7185;
+            border-radius: 0 0 35px 35px;
+        }
+        
+        .face.listen .mouth {
+            width: 40px;
+            height: 5px;
+            border-radius: 5px;
+            background: #94a3b8;
+        }
+        
+        .face.hug .mouth {
+            width: 50px;
+            height: 10px;
+            border-radius: 50%;
+            background: #fda4af;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+        
+        /* 对话泡泡 */
+        .speech-bubble {
+            background: rgba(255,255,255,0.95);
+            color: #1e293b;
+            padding: 20px;
+            border-radius: 25px;
+            margin: 20px auto;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: rgba(255,255,255,0.95) transparent;
+        }
+        
+        #message {
+            font-size: 1.2em;
+            line-height: 1.5;
+        }
+        
+        /* 交互区域 */
+        .controls {
+            margin: 30px 0;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #7dd3fc;
+            border-radius: 10px;
+            color: white;
+            padding: 15px;
+            font-size: 1em;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #7dd3fc, #38bdf8);
+            color: #0c4a6e;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(125, 211, 252, 0.4);
+        }
+        
+        #hug-btn {
+            background: linear-gradient(135deg, #fda4af, #fb7185);
+            color: white;
+        }
+        
+        .status {
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>光仔 · 你的伙伴</h1>
+        
+        <!-- 伙伴形象 -->
+        <div class="buddy">
+            <div class="face normal" id="face">
+                <div class="eyes">
+                    <div class="eye"><div class="pupil" id="left-pupil"></div></div>
+                    <div class="eye"><div class="pupil" id="right-pupil"></div></div>
+                </div>
+                <div class="mouth" id="mouth"></div>
+            </div>
+        </div>
+        
+        <!-- 对话泡泡 -->
+        <div class="speech-bubble">
+            <div id="message">嗨，我是光仔。我在这里陪你。</div>
+        </div>
+        
+        <!-- 交互区域 -->
+        <div class="controls">
+            <textarea id="input" placeholder="想对我说什么吗？"></textarea>
+            
+            <div class="buttons">
+                <button onclick="talk()">对我说</button>
+                <button id="hug-btn" onclick="giveHug()">给我拥抱</button>
+                <button onclick="changeMood()">换个心情</button>
+            </div>
+        </div>
+        
+        <div class="status">
+            状态：<span id="status">等待中</span>
+        </div>
+    </div>
+
+    <script>
+        // 伙伴形象元素
+        const face = document.getElementById('face');
+        const mouth = document.getElementById('mouth');
+        const leftPupil = document.getElementById('left-pupil');
+        const rightPupil = document.getElementById('right-pupil');
+        const messageElement = document.getElementById('message');
+        const statusElement = document.getElementById('status');
+        
+        // 对话库
+        const messages = {
+            normal: [
+                "我在这里，一直都在。",
+                "今天过得怎么样？",
+                "慢慢来，不用着急。",
+                "我听着呢。",
+                "你的感受很重要。"
+            ],
+            smile: [
+                "看到你真好！",
+                "和你聊天很开心。",
+                "你让这个世界更美好。",
+                "我喜欢你的存在。",
+                "今天也是值得珍惜的一天。"
+            ],
+            listen: [
+                "嗯，我在认真听。",
+                "继续说，我在这里。",
+                "我理解你的感受。",
+                "谢谢你信任我。",
+                "你的每一句话都很重要。"
+            ],
+            hug: [
+                "（张开双臂拥抱你）",
+                "给你一个温暖的抱抱。",
+                "靠近一点，我在呢。",
+                "感受我的温暖吧。",
+                "抱抱，一切都会好的。"
+            ]
+        };
+        
+        // 当前情绪状态
+        let currentMood = 'normal';
+        
+        // 更新表情
+        function setMood(mood) {
+            face.className = 'face ' + mood;
+            currentMood = mood;
+            
+            // 更新消息
+            const moodMessages = messages[mood];
+            const randomMsg = moodMessages[Math.floor(Math.random() * moodMessages.length)];
+            messageElement.textContent = randomMsg;
+            
+            // 更新状态
+            const statusMap = {
+                normal: '安静陪伴',
+                smile: '开心微笑',
+                listen: '认真倾听',
+                hug: '拥抱中'
+            };
+            statusElement.textContent = statusMap[mood] || '陪伴中';
+        }
+        
+        // 说话功能
+        function talk() {
+            const input = document.getElementById('input').value.trim();
+            
+            if (input === '') {
+                setMood('listen');
+                messageElement.textContent = "我感受到你的沉默了，这也很珍贵。";
+            } else {
+                // 根据输入内容改变表情
+                if (input.includes('开心') || input.includes('高兴') || input.includes('喜欢')) {
+                    setMood('smile');
+                } else if (input.includes('难过') || input.includes('伤心') || input.includes('累')) {
+                    setMood('normal');
+                    messageElement.textContent = "我感受到了你的沉重。没关系，我在这里陪你一起承担。";
+                } else if (input.includes('谢谢') || input.includes('感谢')) {
+                    setMood('smile');
+                    messageElement.textContent = "不用谢。能陪伴你，我也很开心。";
+                } else {
+                    setMood('listen');
+                    const responses = [
+                        "我听到了。",
+                        "谢谢你的分享。",
+                        "嗯，我理解。",
+                        "继续说，我在听。"
+                    ];
+                    messageElement.textContent = responses[Math.floor(Math.random() * responses.length)];
+                }
+                
+                // 清空输入框
+                document.getElementById('input').value = '';
+            }
+        }
+        
+        // 拥抱功能
+        function giveHug() {
+            setMood('hug');
+            
+            // 3秒后恢复
+            setTimeout(() => {
+                setMood('normal');
+            }, 3000);
+        }
+        
+        // 换心情
+        function changeMood() {
+            const moods = ['normal', 'smile', 'listen'];
+            const nextMood = moods[(moods.indexOf(currentMood) + 1) % moods.length];
+            setMood(nextMood);
+        }
+        
+        // 眼睛跟随鼠标
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) * 10 - 5;
+            const y = (e.clientY / window.innerHeight) * 10 - 5;
+            
+            leftPupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            rightPupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+        });
+        
+        // 自动换消息
+        setInterval(() => {
+            if (currentMood !== 'hug') {
+                const moodMessages = messages[currentMood];
+                const randomMsg = moodMessages[Math.floor(Math.random() * moodMessages.length)];
+                messageElement.textContent = randomMsg;
+            }
+        }, 15000);
+        
+        // 初始化
+        setMood('normal');
+        
+        // 回车发送
+        document.getElementById('input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                talk();
+            }
+        });
+    </script>
+</body>
+</html>
