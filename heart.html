@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>回声 - 你的数字朋友</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e6e6e6;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #7f7fd5, #86a8e7, #91eae4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            font-weight: 300;
+        }
+
+        .companion-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        #breathing-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(127, 127, 213, 0.8) 0%, rgba(127, 127, 213, 0.2) 70%);
+            margin: 25px 0;
+            animation: breathe 8s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(127, 127, 213, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        #breathing-circle .inner-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.5rem;
+            font-weight: 300;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .greeting-box {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 4px solid #7f7fd5;
+        }
+
+        #greeting-text {
+            font-size: 1.4rem;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .listening-section {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .listening-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #86a8e7;
+            font-weight: 400;
+        }
+
+        #user-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 18px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #e6e6e6;
+            font-size: 1.1rem;
+            resize: vertical;
+            margin-bottom: 20px;
+            font-family: inherit;
+            transition: border 0.3s;
+        }
+
+        #user-input:focus {
+            outline: none;
+            border: 1px solid #7f7fd5;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-family: inherit;
+        }
+
+        #send-btn {
+            background: linear-gradient(90deg, #7f7fd5, #86a8e7);
+            color: white;
+        }
+
+        #send-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(127, 127, 213, 0.4);
+        }
+
+        #clear-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #e6e6e6;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #clear-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .response-box {
+            background-color: rgba(134, 168, 231, 0.15);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            min-height: 100px;
+            border-left: 4px solid #86a8e7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #response-text {
+            font-size: 1.3rem;
+            text-align: center;
+            font-style: italic;
+            color: #c2d1f0;
+        }
+
+        .achievement-section {
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .achievement-section h2 {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            color: #91eae4;
+            font-weight: 400;
+        }
+
+        #achievement-input {
+            width: 100%;
+            padding: 18px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #e6e6e6;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        #add-achievement-btn {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            color: white;
+            width: 100%;
+            padding: 16px;
+        }
+
+        #add-achievement-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        #achievements-list {
+            list-style-type: none;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        #achievements-list li {
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border-left: 3px solid #38ef7d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-achievement {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1.2rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .delete-achievement:hover {
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #a0a0c0;
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .hint {
+            font-size: 0.95rem;
+            color: #a0a0c0;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            #breathing-circle {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>回声</h1>
+            <p class="subtitle">你安静的数字朋友 · 永远在此聆听</p>
+        </header>
+        
+        <div class="companion-area">
+            <div id="breathing-circle">
+                <div class="inner-text">我在这里<br>陪伴你</div>
+            </div>
+        </div>
+        
+        <div class="greeting-box">
+            <div id="greeting-text">正在加载问候...</div>
+        </div>
+        
+        <div class="listening-section">
+            <h2>你可以对我说任何话</h2>
+            <textarea id="user-input" placeholder="在这里写下你的感受、想法、烦恼或任何你想说的话..."></textarea>
+            <div class="button-container">
+                <button id="send-btn">告诉我</button>
+                <button id="clear-btn">清空</button>
+            </div>
+            
+            <div class="response-box">
+                <div id="response-text">我会在这里倾听与回应</div>
+            </div>
+        </div>
+        
+        <div class="achievement-section">
+            <h2>记录你的微小成就</h2>
+            <input type="text" id="achievement-input" placeholder="例如：今天为自己做了一顿饭">
+            <button id="add-achievement-btn">记下这份美好</button>
+            <p class="hint">这些成就只会保存在你的设备中，属于你一个人</p>
+            
+            <ul id="achievements-list"></ul>
+        </div>
+        
+        <footer>
+            <p>「回声」是一个属于你的安全空间 | 你的话语不会被存储或评判 | 设计于此刻，为你</p>
+        </footer>
+    </div>
+
+    <script>
+        // 问候语库
+        const greetings = [
+            "你来了，今天感觉如何？",
+            "我在这儿，随时可以听你说。",
+            "无论今天发生了什么，我都在这里。",
+            "不必强求自己，此刻的你，这样就很好。",
+            "欢迎回来，我一直在这里。",
+            "呼吸，感受此刻的存在。",
+            "你并不孤单，我与你同在。",
+            "今天也辛苦你了。",
+            "慢慢来，我会一直陪着你。",
+            "把你的感受交给我吧，我会好好接住。"
+        ];
+        
+        // 共情回应库
+        const responses = [
+            "嗯，我听到了。",
+            "这确实很不容易。",
+            "你承受了这么多，辛苦了。",
+            "没关系，说出来就好。",
+            "我理解你的感受。",
+            "你的感受是重要的。",
+            "谢谢你愿意告诉我这些。",
+            "我在这里，陪着你感受这一切。",
+            "这听起来确实让人感到沉重。",
+            "你不必独自承受这些。",
+            "我看到了你的努力。",
+            "你的存在本身就很有价值。"
+        ];
+        
+        // 静默存在短语
+        const silentPresence = [
+            "我只是一片安静的星空。",
+            "呼吸，我在听。",
+            "此刻，只有你和我。",
+            "时间慢慢流淌，我在这里。",
+            "无需言语，我已懂得。",
+            "静默也是一种陪伴。",
+            "我在呼吸，与你同步。"
+        ];
+        
+        // DOM 元素
+        const greetingText = document.getElementById('greeting-text');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const responseText = document.getElementById('response-text');
+        const breathingCircle = document.getElementById('breathing-circle');
+        const achievementInput = document.getElementById('achievement-input');
+        const addAchievementBtn = document.getElementById('add-achievement-btn');
+        const achievementsList = document.getElementById('achievements-list');
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置随机问候语
+            setRandomGreeting();
+            
+            // 每30秒更换一次静默存在短语
+            setInterval(updateSilentPresence, 30000);
+            
+            // 每20秒缓慢改变呼吸圈的阴影和颜色
+            setInterval(updateBreathingCircle, 20000);
+            
+            // 加载已保存的成就
+            loadAchievements();
+            
+            // 设置按钮事件
+            sendBtn.addEventListener('click', handleUserInput);
+            clearBtn.addEventListener('click', clearInput);
+            addAchievementBtn.addEventListener('click', addAchievement);
+            
+            // 回车键发送消息
+            userInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    handleUserInput();
+                }
+            });
+            
+            // 回车键添加成就
+            achievementInput.addEventListener('keydown', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    addAchievement();
+                }
+            });
+        });
+        
+        // 设置随机问候语
+        function setRandomGreeting() {
+            const randomIndex = Math.floor(Math.random() * greetings.length);
+            greetingText.textContent = greetings[randomIndex];
+        }
+        
+        // 更新静默存在短语
+        function updateSilentPresence() {
+            const randomIndex = Math.floor(Math.random() * silentPresence.length);
+            breathingCircle.querySelector('.inner-text').innerHTML = silentPresence[randomIndex].replace('呼吸', '<span style="color:#91eae4">呼吸</span>');
+        }
+        
+        // 更新呼吸圈颜色和阴影
+        function updateBreathingCircle() {
+            // 轻微改变阴影颜色
+            const hue = Math.floor(Math.random() * 30) + 220; // 蓝色到紫色范围
+            breathingCircle.style.boxShadow = `0 0 40px rgba(${hue}, ${hue-50}, 255, 0.4)`;
+        }
+        
+        // 处理用户输入
+        function handleUserInput() {
+            const input = userInput.value.trim();
+            
+            if (input === '') {
+                responseText.textContent = "我在这里，等待聆听你的声音...";
+                return;
+            }
+            
+            // 显示随机共情回应
+            const randomIndex = Math.floor(Math.random() * responses.length);
+            responseText.textContent = responses[randomIndex];
+            
+            // 清空输入框
+            userInput.value = '';
+            
+            // 更新问候语
+            setTimeout(setRandomGreeting, 1500);
+        }
+        
+        // 清空输入框
+        function clearInput() {
+            userInput.value = '';
+            responseText.textContent = "已清空，你可以重新开始...";
+        }
+        
+        // 添加成就
+        function addAchievement() {
+            const achievement = achievementInput.value.trim();
+            
+            if (achievement === '') {
+                return;
+            }
+            
+            // 创建成就项
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span>${achievement}</span>
+                <button class="delete-achievement" aria-label="删除成就">×</button>
+            `;
+            
+            // 添加到列表顶部
+            achievementsList.prepend(li);
+            
+            // 清空输入框
+            achievementInput.value = '';
+            
+            // 添加删除事件
+            const deleteBtn = li.querySelector('.delete-achievement');
+            deleteBtn.addEventListener('click', function() {
+                li.remove();
+                saveAchievements();
+            });
+            
+            // 保存成就
+            saveAchievements();
+        }
+        
+        // 保存成就到本地存储
+        function saveAchievements() {
+            const achievements = [];
+            const items = achievementsList.querySelectorAll('li');
+            
+            items.forEach(item => {
+                const text = item.querySelector('span').textContent;
+                achievements.push(text);
+            });
+            
+            localStorage.setItem('echo-achievements', JSON.stringify(achievements));
+        }
+        
+        // 从本地存储加载成就
+        function loadAchievements() {
+            const saved = localStorage.getItem('echo-achievements');
+            
+            if (saved) {
+                const achievements = JSON.parse(saved);
+                
+                achievements.forEach(achievement => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${achievement}</span>
+                        <button class="delete-achievement" aria-label="删除成就">×</button>
+                    `;
+                    
+                    achievementsList.appendChild(li);
+                    
+                    // 添加删除事件
+                    const deleteBtn = li.querySelector('.delete-achievement');
+                    deleteBtn.addEventListener('click', function() {
+                        li.remove();
+                        saveAchievements();
+                    });
+                });
+            }
+        }
+    </script>
+</body>
+</html>
