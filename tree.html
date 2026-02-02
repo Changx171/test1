@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* 可折叠代码块样式 */
+        .collapsible {
+            background-color: #f1f1f1;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            border-radius: 8px;
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .collapsible:after {
+            content: '▼';
+            font-size: 13px;
+            color: #777;
+        }
+        
+        .collapsible.active:after {
+            content: '▲';
+        }
+        
+        .content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+    </style>
+</head>
+<body>
+
+<button class="collapsible">🌳 树木呼吸练习代码 ▼</button>
+<div class="content">
+    <pre><code>
+// 呼吸功能代码
+function startBreathing() {
+    if (isBreathing) return;
+    isBreathing = true;
+    // ... 更多代码
+}
+    </code></pre>
+</div>
+
+<button class="collapsible">🎨 样式代码 ▼</button>
+<div class="content">
+    <pre><code>
+/* 呼吸动画样式 */
+@keyframes breath {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.breath-circle {
+    animation: breath 8s infinite ease-in-out;
+}
+    </code></pre>
+</div>
+
+<script>
+    // 折叠功能脚本
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
