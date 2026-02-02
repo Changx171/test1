@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>真实森林疗愈 | 自然心灵驿站</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            color: #1b5e20;
+            line-height: 1.8;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0c3b1e 0%, #1b5e20 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 真实森林背景 */
+        .real-forest-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                linear-gradient(rgba(12, 59, 30, 0.7), rgba(27, 94, 32, 0.7)),
+                url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        /* 真实树木展示区 */
+        .real-tree-gallery {
+            position: relative;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        
+        .real-tree-main {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            margin-bottom: 30px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .real-tree-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .real-tree-image:hover {
+            transform: scale(1.02);
+        }
+        
+        .tree-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            color: white;
+            padding: 25px;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        /* 树木网格 */
+        .tree-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .tree-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 2px solid rgba(165, 214, 167, 0.5);
+        }
+        
+        .tree-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tree-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 2px solid #c8e6c9;
+        }
+        
+        .tree-card-content {
+            padding: 20px;
+        }
+        
+        .tree-card h3 {
+            color: #1b5e20;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .tree-card p {
+            color: #2e7d32;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* 内容区域 */
+        .content-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            border: 3px solid #a5d6a7;
+        }
+        
+        .content-card h1 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 3.5rem;
+            color: #1b5e20;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .content-card h2 {
+            color: #1b5e20;
+            font-size: 2rem;
+            margin: 30px 0 20px;
+            text-align: center;
+        }
+        
+        .content-card p {
+            color: #2e7d32;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .quote-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 30px;
+            margin: 35px 0;
+            border-radius: 0 15px 15px 0;
+            font-style: italic;
+            color: #1b5e20;
+            font-size: 1.3rem;
+            position: relative;
+        }
+        
+        .quote-box::before {
+            content: '"';
+            position: absolute;
+            top: -25px;
+            left: 20px;
+            font-size: 100px;
+            color: rgba(76, 175, 80, 0.2);
+            font-family: serif;
+        }
+        
+        /* 按钮 */
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+            color: white;
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 15px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+            gap: 12px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(46, 125, 50, 0.4);
+        }
+        
+        .action-btn.secondary {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+        }
+        
+        /* 呼吸练习 */
+        .breathing-section {
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, rgba(232, 245, 233, 0.95) 0%, rgba(200, 230, 201, 0.95) 100%);
+            border-radius: 20px;
+            margin: 50px 0;
+            border: 3px solid #81c784;
+        }
+        
+        .breath-circle {
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            background: conic-gradient(
+                #4caf50 0deg,
+                #81c784 120deg,
+                #a5d6a7 240deg,
+                #c8e6c9 360deg
+            );
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 0 60px rgba(76, 175, 80, 0.4);
+            transition: all 1s ease;
+        }
+        
+        /* 树木信息 */
+        .tree-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid #c8e6c9;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-card .icon {
+            font-size: 3rem;
+            color: #4caf50;
+            margin-bottom: 15px;
+        }
+        
+        .info-card h3 {
+            color: #1b5e20;
+            margin-bottom: 10px;
+        }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-top: 40px;
+            border: 3px solid #a5d6a7;
+        }
+        
+        .footer h3 {
+            color: #1b5e20;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .real-tree-main {
+                height: 350px;
+            }
+            
+            .content-card {
+                padding: 25px;
+            }
+            
+            .content-card h1 {
+                font-size: 2.5rem;
+            }
+            
+            .content-card h2 {
+                font-size: 1.8rem;
+            }
+            
+            .tree-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .real-tree-main {
+                height: 250px;
+            }
+            
+            .content-card h1 {
+                font-size: 2rem;
+            }
+            
+            .content-card {
+                padding: 20px;
+            }
+            
+            .action-btn {
+                padding: 14px 25px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* 加载动画 */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+        
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #4caf50;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载动画 -->
+    <div class="loading" id="loading">
+        <div class="loader"></div>
+        <p style="color: white; margin-top: 20px; font-size: 1.2rem;">加载真实树木图片中...</p>
+    </div>
+    
+    <!-- 真实森林背景 -->
+    <div class="real-forest-background"></div>
+    
+    <!-- 主要内容容器 -->
+    <div class="content-container">
+        <!-- 欢迎卡片 -->
+        <div class="content-card">
+            <h1>真实森林疗愈站</h1>
+            <p>欢迎来到一个拥有真实树木的地方。这里的每一张图片都是真实的森林、真实的树木、真实的自然景观。</p>
+            
+            <div class="quote-box">
+                站在真实的树木面前，你会感受到一种无法言喻的宁静。它们见证了时间的流逝，经历了季节的轮回，却依然挺拔生长。这是自然最真实的智慧。
+            </div>
+            
+            <p>当你感到疲惫时，看看这些真实的树木。它们经历了风雨，见证了季节，依然挺拔生长。你也有这样的力量。</p>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="action-btn" id="startExperienceBtn">
+                    <i class="fas fa-tree"></i> 开始真实森林体验
+                </button>
+            </div>
+        </div>
+        
+        <!-- 真实树木展示区 -->
+        <div class="real-tree-gallery">
+            <h2 style="color: white; text-align: center; margin: 30px 0; font-size: 2.5rem;">🌳 真实的树木 🌳</h2>
+            
+            <!-- 主展示树 -->
+            <div class="real-tree-main">
+                <img id="mainTreeImage" class="real-tree-image" 
+                     src="https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                     alt="巨大的古老橡树" 
+                     onload="hideLoading()"
+                     onerror="loadFallbackImage()">
+                <div class="tree-caption">巨大的古老橡树 - 见证了几个世纪的变迁</div>
+            </div>
+            
+            <!-- 树木网格 -->
+            <div class="tree-grid">
+                <div class="tree-card">
+                    <img src="https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                         alt="白桦树林" 
+                         onerror="loadFallbackImage(this)">
+                    <div class="tree-card-content">
+                        <h3>白桦树林</h3>
+                        <p>洁白的树干，翠绿的叶子，白桦树总是给人一种清新纯净的感觉。</p>
+                    </div>
+                </div>
+                
+                <div class="tree-card">
+                    <img src="https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                         alt="红杉巨树" 
+                         onerror="loadFallbackImage(this)">
+                    <div class="tree-card-content">
+                        <h3>红杉巨树</h3>
+                        <p>地球上最高的树木之一，可以长到100米以上，寿命超过2000年。</p>
+                    </div>
+                </div>
+                
+                <div class="tree-card">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" 
+                         alt="枫叶树" 
+                         onerror="loadFallbackImage(this)">
+                    <div class="tree-card-content">
+                        <h3>枫叶树</h3>
+                        <p>秋天时枫叶变成火红色，是自然界最美丽的色彩变化之一。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 疗愈活动 -->
+        <div class="content-card">
+            <h2>🌿 基于真实树木的疗愈活动</h2>
+            <p>看着这些真实的树木，参与这些与树木相关的疗愈活动：</p>
+            
+            <div class="tree-info-grid">
+                <div class="info-card">
+                    <div class="icon">👁️</div>
+                    <h3>树木观察</h3>
+                    <p>仔细观察真实树木的结构、纹理、色彩和姿态</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="icon">🌬️</div>
+                    <h3>森林呼吸</h3>
+                    <p>想象自己身处这片森林，进行深度呼吸练习</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="icon">📝</div>
+                    <h3>树木日记</h3>
+                    <p>记录你对这些真实树木的感受和观察</p>
+                </div>
+                
+                <div class="info-card">
+                    <div class="icon">🧘</div>
+                    <h3>树下冥想</h3>
+                    <p>想象自己坐在这些真实的树下进行冥想</p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="action-btn" id="treeObservationBtn">
+                    <i class="fas fa-binoculars"></i> 开始树木观察练习
+                </button>
+                <button class="action-btn secondary" id="changeTreeBtn">
+                    <i class="fas fa-random"></i> 切换树木图片
+                </button>
+            </div>
+        </div>
+        
+        <!-- 呼吸练习 -->
+        <div class="breathing-section">
+            <h2>🌬️ 真实森林呼吸法</h2>
+            <p>看着真实的树木，调整你的呼吸节奏：</p>
+            
+            <div class="breath-circle" id="breathCircle">
+                呼吸
+            </div>
+            
+            <p id="breathInstruction" style="font-size: 1.3rem; color: #1b5e20; margin: 20px 0; font-weight: bold;">
+                深吸气...感受真实树木的能量
+            </p>
+            
+            <div style="margin-top: 30px;">
+                <button class="action-btn" id="startBreathBtn">
+                    <i class="fas fa-play-circle"></i> 开始呼吸练习
+                </button>
+                <button class="action-btn" id="resetBreathBtn" style="background: linear-gradient(135deg, #78909c, #546e7a);">
+                    <i class="fas fa-redo"></i> 重新开始
+                </button>
+            </div>
+        </div>
+        
+        <!-- 树木知识 -->
+        <div class="content-card">
+            <h2>📚 关于真实树木的知识</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin: 40px 0;">
+                <div style="padding: 25px; background: #e8f5e9; border-radius: 15px; border: 2px solid #c8e6c9;">
+                    <h3 style="color: #1b5e20; margin-bottom: 15px;">🌳 树木的生命周期</h3>
+                    <p style="color: #2e7d32;">树木的生命可以长达数百年甚至数千年。它们通过年轮记录自己的年龄和每年的生长情况。</p>
+                </div>
+                
+                <div style="padding: 25px; background: #c8e6c9; border-radius: 15px; border: 2px solid #a5d6a7;">
+                    <h3 style="color: #1b5e20; margin-bottom: 15px;">🍃 树木对地球的重要性</h3>
+                    <p style="color: #2e7d32;">一棵成熟的树每年可以吸收约22公斤的二氧化碳，并释放足够的氧气供两个人呼吸。</p>
+                </div>
+                
+                <div style="padding: 25px; background: #a5d6a7; border-radius: 15px; border: 2px solid #81c784;">
+                    <h3 style="color: #1b5e20; margin-bottom: 15px;">🌱 树木的交流方式</h3>
+                    <p style="color: #2e7d32;">树木通过地下真菌网络相互交流，分享养分和警告危险，这个网络被称为"树联网"。</p>
+                </div>
+            </div>
+            
+            <button class="action-btn" id="moreTreeFactsBtn">
+                <i class="fas fa-seedling"></i> 了解更多树木知识
+            </button>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <h3>🌳 与真实树木连接 🌳</h3>
+            <p style="color: #2e7d32; font-size: 1.2rem; margin: 20px 0;">
+                愿这些真实的树木图片能带给你内心的平静和力量
+            </p>
+            <p style="color: #4caf50; margin-top: 30px;">
+                图片来自 Unsplash - 真实树木摄影作品
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // 树木图片库（来自Unsplash的真实树木图片）
+        const treeImages = [
+            {
+                url: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                caption: "巨大的古老橡树 - 见证了几个世纪的变迁"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                caption: "茂密的森林 - 生命的绿色海洋"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                caption: "阳光穿透森林 - 自然的光影魔术"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1503437313881-503a91226402?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                caption: "秋季的树木 - 大自然的色彩盛宴"
+            },
+            {
+                url: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                caption: "冬季的树木 - 寂静中的力量"
+            }
+        ];
+        
+        // 备用图片（如果Unsplash图片无法加载）
+        const fallbackImages = [
+            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+            "https://cdn.pixabay.com/photo/2015/06/19/21/24/avenue-815297_1280.jpg",
+            "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg"
+        ];
+        
+        // 树木知识
+        const treeFacts = [
+            "🌲 世界上最古老的树是一棵名为'Methuselah'的狐尾松，已经有4852岁了！",
+            "🌳 一棵大树一天可以蒸发数百升水到大气中，帮助调节气候。",
+            "🍃 树木通过树叶的气孔'呼吸'，吸收二氧化碳，释放氧气。",
+            "🌱 有些树木可以通过根系繁殖，形成基因完全相同的克隆群体。",
+            "🪵 树木的木材中有大约50%是碳，这就是为什么森林是重要的碳汇。",
+            "🌿 一棵橡树可以支撑超过500种不同的昆虫物种。",
+            "🍂 树木可以感知季节变化，并通过激素调节来准备过冬或迎接春天。",
+            "🌴 有些热带雨林树木的根系非常浅，它们通过板根来支撑高大的树干。"
+        ];
+        
+        // 显示加载动画
+        document.getElementById('loading').style.display = 'block';
+        
+        // 隐藏加载动画
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        // 加载备用图片
+        function loadFallbackImage(imgElement = null) {
+            if (imgElement) {
+                // 如果是小图片加载失败
+                const randomFallback = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+                imgElement.src = randomFallback;
+                imgElement.onerror = null; // 防止无限循环
+            } else {
+                // 如果是主图片加载失败
+                const randomFallback = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
+                document.getElementById('mainTreeImage').src = randomFallback;
+                document.querySelector('.tree-caption').textContent = "美丽的自然树木 - 真实摄影作品";
+                hideLoading();
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保主图片加载后隐藏加载动画
+            const mainImage = document.getElementById('mainTreeImage');
+            if (mainImage.complete) {
+                hideLoading();
+            }
+            
+            console.log("🌳 真实树木图片已加载");
+            console.log("所有树木图片均来自真实摄影作品");
+        });
+        
+        // 开始体验按钮
+        document.getElementById('startExperienceBtn').addEventListener('click', function() {
+            alert("🌲 欢迎来到真实森林体验 🌲\n\n这里的所有树木图片都是真实的摄影作品，来自世界各地的美丽森林。\n\n请慢慢欣赏这些真实的树木，感受它们的力量和美。\n\n你可以点击'切换树木图片'按钮查看更多美丽的树木照片。");
+        });
+        
+        // 树木观察练习
+        document.getElementById('treeObservationBtn').addEventListener('click', function() {
+            const observationSteps = [
+                "看着当前显示的树木图片，仔细观察它的整体形态",
+                "注意树干的颜色、纹理和粗细",
+                "观察树枝的分布和伸展方向",
+                "注意树叶的颜色、形状和密度",
+                "想象这棵树在自然环境中的样子",
+                "思考这棵树可能经历了多少岁月",
+                "感受这棵树传达给你的情绪和能量",
+                "感谢这棵树为地球做出的贡献"
+            ];
+            
+            let step = 0;
+            const observationModal = document.createElement('div');
+            observationModal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 35px;
+                    border-radius: 20px;
+                    box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+                    z-index: 2000;
+                    max-width: 500px;
+                    width: 90%;
+                    border: 4px solid #4caf50;
+                    text-align: center;
+                ">
+                    <h3 style="color: #1b5e20; margin-bottom: 25px; font-size: 1.8rem;">👁️ 树木观察练习</h3>
+                    <div id="observationStep" style="
+                        font-size: 1.2rem;
+                        color: #2e7d32;
+                        margin: 25px 0;
+                        min-height: 120px;
+                        line-height: 1.8;
+                        padding: 15px;
+                        background: #f1f8e9;
+                        border-radius: 10px;
+                    ">${observationSteps[step]}</div>
+                    <div style="margin-top: 30px;">
+                        <button id="nextObservationBtn" style="
+                            background: #2e7d32;
+                            color: white;
+                            border: none;
+                            padding: 14px 35px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            font-size: 1.1rem;
+                            margin-right: 15px;
+                        ">
+                            ${step === observationSteps.length - 1 ? '完成观察' : '下一步'}
+                        </button>
+                        <button id="closeObservationBtn" style="
+                            background: #757575;
+                            color: white;
+                            border: none;
+                            padding: 14px 35px;
+                            border-radius: 25px;
+                            cursor: pointer;
+                            font-weight: bold;
+                            font-size: 1.1rem;
+                        ">
+                            退出
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(observationModal);
+            
+            document.getElementById('nextObservationBtn').addEventListener('click', function() {
+                step++;
+                if (step < observationSteps.length) {
+                    document.getElementById('observationStep').textContent = observationSteps[step];
+                    this.textContent = step === observationSteps.length - 1 ? '完成观察' : '下一步';
+                } else {
+                    observationModal.remove();
+                    alert("👁️ 观察练习完成！\n\n你已经与这棵真实的树木建立了深刻的连接。\n记住：每一次认真的观察，都是与自然的对话。");
+                }
+            });
+            
+            document.getElementById('closeObservationBtn').addEventListener('click', function() {
+                observationModal.remove();
+            });
+        });
+        
+        // 切换树木图片
+        document.getElementById('changeTreeBtn').addEventListener('click', function() {
+            const randomIndex = Math.floor(Math.random() * treeImages.length);
+            const selectedTree = treeImages[randomIndex];
+            
+            // 显示加载
+            document.getElementById('loading').style.display = 'block';
+            
+            // 预加载图片
+            const img = new Image();
+            img.onload = function() {
+                document.getElementById('mainTreeImage').src = selectedTree.url;
+                document.querySelector('.tree-caption').textContent = selectedTree.caption;
+                hideLoading();
+            };
+            img.onerror = function() {
+                loadFallbackImage();
+            };
+            img.src = selectedTree.url;
+        });
+        
+        // 呼吸练习
+        let isBreathing = false;
+        let breathTimer;
+        let breathPhase = 0;
+        let breathCount = 0;
+        
+        document.getElementById('startBreathBtn').addEventListener('click', function() {
+            const breathCircle = document.getElementById('breathCircle');
+            const breathInstruction = document.getElementById('breathInstruction');
+            
+            if (!isBreathing) {
+                isBreathing = true;
+                this.innerHTML = '<i class="fas fa-pause-circle"></i> 暂停呼吸';
+                
+                const breathPhases = [
+                    { text: "深吸气...感受真实树木的能量", duration: 4, color: "#4caf50" },
+                    { text: "屏息...让能量在全身流动", duration: 2, color: "#ff9800" },
+                    { text: "慢呼气...释放所有压力和疲惫", duration: 6, color: "#2196f3" },
+                    { text: "停顿...与自然合为一体", duration: 2, color: "#9c27b0" }
+                ];
+                
+                breathTimer = setInterval(() => {
+                    breathCount++;
+                    
+                    const phase = breathPhases[breathPhase];
+                    
+                    if (breathCount <= phase.duration) {
+                        breathCircle.textContent = `${breathCount}`;
+                        breathCircle.style.background = `conic-gradient(${phase.color} ${(breathCount/phase.duration)*360}deg, #e0e0e0 0deg)`;
+                        breathInstruction.textContent = `${phase.text} (${breathCount}秒)`;
+                        
+                        // 呼吸时的缩放效果
+                        if (breathPhase === 0) { // 吸气
+                            breathCircle.style.transform = `scale(${1 + breathCount*0.02})`;
+                        } else if (breathPhase === 2) { // 呼气
+                            breathCircle.style.transform = `scale(${1.08 - breathCount*0.013})`;
+                        }
+                    } else {
+                        breathCount = 0;
+                        breathPhase = (breathPhase + 1) % breathPhases.length;
+                    }
+                }, 1000);
+                
+            } else {
+                isBreathing = false;
+                this.innerHTML = '<i class="fas fa-play-circle"></i> 开始呼吸练习';
+                clearInterval(breathTimer);
+                breathCircle.textContent = "呼吸";
+                breathCircle.style.background = "conic-gradient(#4caf50 0deg, #81c784 120deg, #a5d6a7 240deg, #c8e6c9 360deg)";
+                breathCircle.style.transform = "scale(1)";
+                breathInstruction.textContent = "深吸气...感受真实树木的能量";
+                breathPhase = 0;
+                breathCount = 0;
+            }
+        });
+        
+        // 重新开始呼吸
+        document.getElementById('resetBreathBtn').addEventListener('click', function() {
+            if (isBreathing) {
+                clearInterval(breathTimer);
+                isBreathing = false;
+                document.getElementById('startBreathBtn').innerHTML = '<i class="fas fa-play-circle"></i> 开始呼吸练习';
+            }
+            
+            const breathCircle = document.getElementById('breathCircle');
+            const breathInstruction = document.getElementById('breathInstruction');
+            
+            breathCircle.textContent = "呼吸";
+            breathCircle.style.background = "conic-gradient(#4caf50 0deg, #81c784 120deg, #a5d6a7 240deg, #c8e6c9 360deg)";
+            breathCircle.style.transform = "scale(1)";
+            breathInstruction.textContent = "深吸气...感受真实树木的能量";
+            breathPhase = 0;
+            breathCount = 0;
+        });
+        
+        // 了解更多树木知识
+        document.getElementById('moreTreeFactsBtn').addEventListener('click', function() {
+            const randomFact = treeFacts[Math.floor(Math.random() * treeFacts.length)];
+            
+            const factModal = document.createElement('div');
+            factModal.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: white;
+                    padding: 35px;
+                    border-radius: 20px;
+                    box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+                    z-index: 2000;
+                    max-width: 500px;
+                    width: 90%;
+                    border: 4px solid #4caf50;
+                    text-align: center;
+                    animation: modalAppear 0.5s ease-out;
+                ">
+                    <div style="font-size: 60px; margin-bottom: 25px;">🌳</div>
+                    <h3 style="color: #1b5e20; margin-bottom: 20px; font-size: 1.8rem;">树木冷知识</h3>
+                    <p style="color: #333; font-size: 1.3rem; line-height: 1.8; margin-bottom: 30px;">
+                        ${randomFact}
+                    </p>
+                    <button onclick="this.parentElement.remove()" style="
+                        background: #2e7d32;
+                        color: white;
+                        border: none;
+                        padding: 14px 35px;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1.1rem;
+                    ">
+                        知道了
+                    </button>
+                </div>
+            `;
+            
+            const modalStyle = document.createElement('style');
+            modalStyle.textContent = `
+                @keyframes modalAppear {
+                    0% { 
+                        transform: translate(-50%, -50%) scale(0.9);
+                        opacity: 0;
+                    }
+                    100% { 
+                        transform: translate(-50%, -50%) scale(1);
+                        opacity: 1;
+                    }
+                }
+            `;
+            
+            document.body.appendChild(factModal);
+            document.head.appendChild(modalStyle);
+            
+            // 15秒后自动关闭
+            setTimeout(() => {
+                if (factModal.parentNode) {
+                    factModal.remove();
+                    modalStyle.remove();
+                }
+            }, 15000);
+        });
+        
+        // 每30秒自动切换一张树木图片
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30%概率自动切换
+                document.getElementById('changeTreeBtn').click();
+            }
+        }, 30000);
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            
+            .real-tree-image {
+                animation: fadeIn 1s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
