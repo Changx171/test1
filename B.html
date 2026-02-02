@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>真实树木呼吸疗愈 | 自然心灵连接</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif SC', serif;
+            color: #1b5e20;
+            line-height: 1.8;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0c3b1e 0%, #1b5e20 100%);
+            overflow-x: hidden;
+        }
+        
+        /* 真实树木呼吸区 */
+        .real-tree-breathing-area {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        /* 真实的树木图片容器 */
+        .real-tree-container {
+            position: relative;
+            width: 90%;
+            max-width: 900px;
+            height: 500px;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+            margin: 30px auto;
+            border: 8px solid rgba(255, 255, 255, 0.15);
+            background: #000;
+        }
+        
+        .breathing-tree-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.8s ease;
+        }
+        
+        .tree-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(12, 59, 30, 0.2) 0%,
+                rgba(12, 59, 30, 0.1) 30%,
+                transparent 50%,
+                rgba(12, 59, 30, 0.2) 100%
+            );
+            pointer-events: none;
+        }
+        
+        .tree-title {
+            position: absolute;
+            bottom: 40px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        /* 呼吸控制面板 */
+        .breathing-controls {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px;
+            max-width: 800px;
+            width: 90%;
+            margin: 30px auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 3px solid #a5d6a7;
+            text-align: center;
+        }
+        
+        .breathing-controls h2 {
+            color: #1b5e20;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            font-family: 'Ma Shan Zheng', cursive;
+        }
+        
+        .breath-instruction {
+            font-size: 1.4rem;
+            color: #2e7d32;
+            margin: 25px 0;
+            padding: 20px;
+            background: #e8f5e9;
+            border-radius: 15px;
+            font-weight: bold;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .breath-timer {
+            font-size: 4rem;
+            color: #4caf50;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: monospace;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .breath-phase-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .phase-dot {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.5s ease;
+        }
+        
+        .phase-dot.active {
+            background: #4caf50;
+            color: white;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        
+        /* 呼吸可视化 */
+        .breath-visualization {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+        }
+        
+        .breath-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1b5e20;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.3) 100%);
+            overflow: hidden;
+        }
+        
+        .breath-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(76, 175, 80, 0.2);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0.8;
+            }
+            100% {
+                width: 200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+        
+        /* 按钮样式 */
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .breath-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.3);
+            gap: 15px;
+            min-width: 200px;
+        }
+        
+        .breath-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(46, 125, 50, 0.4);
+        }
+        
+        .breath-btn.secondary {
+            background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+        }
+        
+        .breath-btn.tertiary {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+        }
+        
+        /* 树木信息卡片 */
+        .tree-info-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            margin: 30px auto;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 3px solid #a5d6a7;
+        }
+        
+        .tree-info-card h3 {
+            color: #1b5e20;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .tree-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-item {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #c8e6c9;
+        }
+        
+        .stat-label {
+            color: #2e7d32;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            color: #1b5e20;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        /* 加载状态 */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(12, 59, 30, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            color: white;
+        }
+        
+        .loader {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #4caf50;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+            margin-bottom: 30px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .real-tree-container {
+                height: 400px;
+            }
+            
+            .tree-title {
+                font-size: 1.4rem;
+                bottom: 20px;
+                padding: 10px;
+            }
+            
+            .breathing-controls {
+                padding: 25px;
+            }
+            
+            .breathing-controls h2 {
+                font-size: 1.8rem;
+            }
+            
+            .breath-timer {
+                font-size: 3rem;
+            }
+            
+            .breath-btn {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                min-width: 160px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .real-tree-container {
+                height: 300px;
+                width: 95%;
+            }
+            
+            .breath-phase-indicator {
+                gap: 10px;
+            }
+            
+            .phase-dot {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .control-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .breath-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+        
+        /* 呼吸动画类 */
+        .breathing-in {
+            animation: breathIn 4s ease-in-out;
+        }
+        
+        .breathing-hold {
+            animation: breathHold 2s ease-in-out;
+        }
+        
+        .breathing-out {
+            animation: breathOut 6s ease-in-out;
+        }
+        
+        @keyframes breathIn {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        @keyframes breathHold {
+            0%, 100% { transform: scale(1.1); }
+        }
+        
+        @keyframes breathOut {
+            0% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 加载状态 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+        <h2 style="margin-bottom: 20px; font-size: 1.8rem;">正在加载真实树木...</h2>
+        <p style="font-size: 1.1rem; text-align: center; max-width: 500px; line-height: 1.6;">
+            正在从Unsplash加载高清真实树木图片<br>
+            请稍候...
+        </p>
+    </div>
+    
+    <!-- 真实树木呼吸区 -->
+    <div class="real-tree-breathing-area">
+        <!-- 真实的树木图片 -->
+        <div class="real-tree-container">
+            <img id="breathingTree" class="breathing-tree-image" 
+                 src="https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80" 
+                 alt="真实森林树木"
+                 onload="hideLoading()"
+                 onerror="loadFallbackTree()">
+            <div class="tree-overlay"></div>
+            <div class="tree-title" id="treeTitle">茂密的真实森林 - 深呼吸的完美场所</div>
+        </div>
+        
+        <!-- 呼吸控制面板 -->
+        <div class="breathing-controls">
+            <h2>🌲 真实树木呼吸练习 🌲</h2>
+            <p style="color: #2e7d32; font-size: 1.2rem; margin-bottom: 25px;">
+                看着上面真实的树木，调整你的呼吸节奏。<br>
+                让树木的宁静指引你的呼吸。
+            </p>
+            
+            <!-- 呼吸可视化 -->
+            <div class="breath-visualization">
+                <div class="breath-circle" id="breathCircle">
+                    <span id="breathText">准备呼吸</span>
+                </div>
+                <div class="breath-pulse" id="breathPulse"></div>
+            </div>
+            
+            <div class="breath-timer" id="breathTimer">0</div>
+            
+            <div class="breath-instruction" id="breathInstruction">
+                点击"开始呼吸"按钮，跟随真实树木的节奏呼吸
+            </div>
+            
+            <!-- 呼吸阶段指示器 -->
+            <div class="breath-phase-indicator">
+                <div class="phase-dot" id="phase1">吸气</div>
+                <div class="phase-dot" id="phase2">屏息</div>
+                <div class="phase-dot" id="phase3">呼气</div>
+                <div class="phase-dot" id="phase4">休息</div>
+            </div>
+            
+            <!-- 控制按钮 -->
+            <div class="control-buttons">
+                <button class="breath-btn" id="startBreathBtn">
+                    <i class="fas fa-play-circle"></i> 开始呼吸
+                </button>
+                <button class="breath-btn secondary" id="pauseBreathBtn" disabled>
+                    <i class="fas fa-pause-circle"></i> 暂停
+                </button>
+                <button class="breath-btn tertiary" id="changeTreeBtn">
+                    <i class="fas fa-tree"></i> 切换树木
+                </button>
+                <button class="breath-btn" id="resetBreathBtn" style="background: linear-gradient(135deg, #78909c, #546e7a);">
+                    <i class="fas fa-redo"></i> 重新开始
+                </button>
+            </div>
+        </div>
+        
+        <!-- 当前树木信息 -->
+        <div class="tree-info-card">
+            <h3>🌳 当前树木信息</h3>
+            <p style="color: #2e7d32; margin-bottom: 20px; text-align: center;">
+                你正在看着一棵真实的树木进行呼吸练习。<br>
+                这棵树生长在自然环境中，经历了季节变化和岁月洗礼。
+            </p>
+            
+            <div class="tree-stats">
+                <div class="stat-item">
+                    <div class="stat-label">树木类型</div>
+                    <div class="stat-value" id="treeType">混合森林</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">适合呼吸</div>
+                    <div class="stat-value" id="breathSuitability">非常适合</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">宁静指数</div>
+                    <div class="stat-value" id="calmnessIndex">9.2/10</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">建议呼吸时长</div>
+                    <div class="stat-value" id="suggestedTime">5-10分钟</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 真实树木数据库
+        const realTrees = [
+            {
+                id: 1,
+                name: "茂密森林",
+                image: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "混合森林",
+                suitability: "非常适合",
+                calmness: "9.2/10",
+                time: "5-10分钟",
+                description: "茂密的真实森林 - 深呼吸的完美场所",
+                color: "#4caf50"
+            },
+            {
+                id: 2,
+                name: "古老橡树",
+                image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "古老橡树",
+                suitability: "优秀",
+                calmness: "9.5/10",
+                time: "8-12分钟",
+                description: "巨大的古老橡树 - 几个世纪的生命智慧",
+                color: "#2e7d32"
+            },
+            {
+                id: 3,
+                name: "阳光森林",
+                image: "https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "阳光森林",
+                suitability: "非常适合",
+                calmness: "8.8/10",
+                time: "6-10分钟",
+                description: "阳光穿透的真实森林 - 自然的光影疗愈",
+                color: "#ff9800"
+            },
+            {
+                id: 4,
+                name: "秋季树林",
+                image: "https://images.unsplash.com/photo-1503437313881-503a91226402?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "秋季枫树",
+                suitability: "良好",
+                calmness: "8.5/10",
+                time: "4-8分钟",
+                description: "秋季的真实树木 - 大自然的色彩交响曲",
+                color: "#ff5722"
+            },
+            {
+                id: 5,
+                name: "雾中森林",
+                image: "https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "雾中森林",
+                suitability: "优秀",
+                calmness: "9.8/10",
+                time: "10-15分钟",
+                description: "雾中的真实森林 - 神秘的宁静空间",
+                color: "#78909c"
+            },
+            {
+                id: 6,
+                name: "红杉巨树",
+                image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=80",
+                type: "红杉巨树",
+                suitability: "极佳",
+                calmness: "9.7/10",
+                time: "12-20分钟",
+                description: "真实的红杉巨树 - 连接地球的古老能量",
+                color: "#5d4037"
+            }
+        ];
+        
+        // 备用图片（如果Unsplash图片无法加载）
+        const fallbackTrees = [
+            {
+                image: "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+                description: "美丽的真实树木 - 自然的疗愈力量"
+            },
+            {
+                image: "https://cdn.pixabay.com/photo/2015/06/19/21/24/avenue-815297_1280.jpg",
+                description: "林荫大道 - 深呼吸的理想场所"
+            },
+            {
+                image: "https://cdn.pixabay.com/photo/2016/05/05/02/37/sunset-1373171_1280.jpg",
+                description: "日落时分的树木 - 宁静与美丽的结合"
+            }
+        ];
+        
+        // 当前状态
+        let currentTreeIndex = 0;
+        let isBreathing = false;
+        let isPaused = false;
+        let breathTimer = null;
+        let breathPhase = 0; // 0:吸气, 1:屏息, 2:呼气, 3:休息
+        let breathCount = 0;
+        let totalTime = 0;
+        
+        // DOM元素
+        const breathingTree = document.getElementById('breathingTree');
+        const treeTitle = document.getElementById('treeTitle');
+        const treeType = document.getElementById('treeType');
+        const breathSuitability = document.getElementById('breathSuitability');
+        const calmnessIndex = document.getElementById('calmnessIndex');
+        const suggestedTime = document.getElementById('suggestedTime');
+        const breathCircle = document.getElementById('breathCircle');
+        const breathText = document.getElementById('breathText');
+        const breathPulse = document.getElementById('breathPulse');
+        const breathTimerDisplay = document.getElementById('breathTimer');
+        const breathInstruction = document.getElementById('breathInstruction');
+        const phase1 = document.getElementById('phase1');
+        const phase2 = document.getElementById('phase2');
+        const phase3 = document.getElementById('phase3');
+        const phase4 = document.getElementById('phase4');
+        const startBreathBtn = document.getElementById('startBreathBtn');
+        const pauseBreathBtn = document.getElementById('pauseBreathBtn');
+        const changeTreeBtn = document.getElementById('changeTreeBtn');
+        const resetBreathBtn = document.getElementById('resetBreathBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        // 呼吸阶段配置
+        const breathPhases = [
+            { name: "吸气", duration: 4, instruction: "看着真实的树木，深深吸气...", color: "#4caf50", animation: "breathing-in" },
+            { name: "屏息", duration: 2, instruction: "屏住呼吸，感受能量流动...", color: "#ff9800", animation: "breathing-hold" },
+            { name: "呼气", duration: 6, instruction: "缓慢呼气，释放所有压力...", color: "#2196f3", animation: "breathing-out" },
+            { name: "休息", duration: 2, instruction: "自然呼吸，与树木同在...", color: "#9c27b0", animation: "breathing-hold" }
+        ];
+        
+        // 初始化
+        function init() {
+            // 显示加载状态
+            loadingOverlay.style.display = 'flex';
+            
+            // 预加载第一张图片
+            const img = new Image();
+            img.onload = function() {
+                hideLoading();
+                updateTreeInfo();
+            };
+            img.onerror = function() {
+                loadFallbackTree();
+            };
+            img.src = realTrees[currentTreeIndex].image;
+            
+            // 设置事件监听器
+            setupEventListeners();
+            
+            // 更新呼吸指示器
+            updatePhaseIndicator();
+        }
+        
+        // 隐藏加载状态
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+        
+        // 加载备用树木图片
+        function loadFallbackTree() {
+            const fallbackTree = fallbackTrees[Math.floor(Math.random() * fallbackTrees.length)];
+            breathingTree.src = fallbackTree.image;
+            treeTitle.textContent = fallbackTree.description;
+            
+            // 更新树木信息为默认值
+            treeType.textContent = "自然树木";
+            breathSuitability.textContent = "良好";
+            calmnessIndex.textContent = "8.5/10";
+            suggestedTime.textContent = "5-8分钟";
+            
+            hideLoading();
+        }
+        
+        // 设置事件监听器
+        function setupEventListeners() {
+            startBreathBtn.addEventListener('click', startBreathing);
+            pauseBreathBtn.addEventListener('click', togglePause);
+            changeTreeBtn.addEventListener('click', changeTree);
+            resetBreathBtn.addEventListener('click', resetBreathing);
+        }
+        
+        // 更新树木信息
+        function updateTreeInfo() {
+            const tree = realTrees[currentTreeIndex];
+            
+            treeTitle.textContent = tree.description;
+            treeType.textContent = tree.type;
+            breathSuitability.textContent = tree.suitability;
+            calmnessIndex.textContent = tree.calmness;
+            suggestedTime.textContent = tree.time;
+            
+            // 更新树木图片
+            breathingTree.src = tree.image;
+            
+            // 轻微淡入效果
+            breathingTree.style.opacity = '0';
+            setTimeout(() => {
+                breathingTree.style.opacity = '1';
+            }, 100);
+        }
+        
+        // 开始呼吸练习
+        function startBreathing() {
+            if (isBreathing && !isPaused) return;
+            
+            if (!isBreathing) {
+                // 开始新的呼吸练习
+                isBreathing = true;
+                isPaused = false;
+                breathPhase = 0;
+                breathCount = 0;
+                totalTime = 0;
+                
+                startBreathBtn.innerHTML = '<i class="fas fa-sync-alt"></i> 呼吸中...';
+                startBreathBtn.disabled = true;
+                pauseBreathBtn.disabled = false;
+                pauseBreathBtn.innerHTML = '<i class="fas fa-pause-circle"></i> 暂停';
+                
+                // 开始计时器
+                breathTimer = setInterval(updateBreathing, 1000);
+                
+                // 开始第一次呼吸
+                startBreathPhase();
+            } else if (isPaused) {
+                // 从暂停状态恢复
+                isPaused = false;
+                pauseBreathBtn.innerHTML = '<i class="fas fa-pause-circle"></i> 暂停';
+                breathTimer = setInterval(updateBreathing, 1000);
+            }
+        }
+        
+        // 切换暂停状态
+        function togglePause() {
+            if (!isBreathing) return;
+            
+            isPaused = !isPaused;
+            
+            if (isPaused) {
+                clearInterval(breathTimer);
+                pauseBreathBtn.innerHTML = '<i class="fas fa-play-circle"></i> 继续';
+                breathInstruction.textContent = "呼吸已暂停，点击继续...";
+                
+                // 停止动画
+                breathCircle.classList.remove('breathing-in', 'breathing-hold', 'breathing-out');
+                breathPulse.style.animation = 'none';
+            } else {
+                pauseBreathBtn.innerHTML = '<i class="fas fa-pause-circle"></i> 暂停';
+                breathTimer = setInterval(updateBreathing, 1000);
+                
+                // 重新开始动画
+                startBreathPhase();
+            }
+        }
+        
+        // 更新呼吸状态
+        function updateBreathing() {
+            if (isPaused) return;
+            
+            breathCount++;
+            totalTime++;
+            
+            const phase = breathPhases[breathPhase];
+            
+            // 更新计时器显示
+            breathTimerDisplay.textContent = totalTime;
+            
+            // 检查是否需要进入下一阶段
+            if (breathCount >= phase.duration) {
+                breathCount = 0;
+                breathPhase = (breathPhase + 1) % breathPhases.length;
+                startBreathPhase();
+            } else {
+                // 更新当前阶段计时
+                breathText.textContent = `${phase.name} ${breathCount}`;
+                breathInstruction.textContent = `${phase.instruction} (${breathCount}秒)`;
+            }
+        }
+        
+        // 开始新的呼吸阶段
+        function startBreathPhase() {
+            const phase = breathPhases[breathPhase];
+            
+            // 更新显示
+            breathText.textContent = phase.name;
+            breathInstruction.textContent = `${phase.instruction} (0秒)`;
+            breathCircle.style.borderColor = phase.color;
+            
+            // 更新阶段指示器
+            updatePhaseIndicator();
+            
+            // 开始动画
+            breathCircle.classList.remove('breathing-in', 'breathing-hold', 'breathing-out');
+            void breathCircle.offsetWidth; // 触发重绘
+            breathCircle.classList.add(phase.animation);
+            
+            // 创建脉冲效果
+            if (phase.name === "吸气") {
+                breathPulse.style.background = `radial-gradient(circle, ${phase.color}40, ${phase.color}20)`;
+                breathPulse.style.animation = 'pulse 4s ease-in-out infinite';
+            } else if (phase.name === "呼气") {
+                breathPulse.style.animation = 'pulse 6s ease-in-out infinite';
+            } else {
+                breathPulse.style.animation = 'none';
+            }
+            
+            // 更新树木图片的轻微效果
+            if (phase.name === "吸气") {
+                breathingTree.style.transform = 'scale(1.01)';
+            } else if (phase.name === "呼气") {
+                breathingTree.style.transform = 'scale(0.99)';
+            }
+            
+            setTimeout(() => {
+                breathingTree.style.transform = 'scale(1)';
+            }, phase.duration * 500);
+        }
+        
+        // 更新阶段指示器
+        function updatePhaseIndicator() {
+            // 重置所有指示器
+            phase1.classList.remove('active');
+            phase2.classList.remove('active');
+            phase3.classList.remove('active');
+            phase4.classList.remove('active');
+            
+            // 激活当前阶段
+            switch(breathPhase) {
+                case 0:
+                    phase1.classList.add('active');
+                    break;
+                case 1:
+                    phase2.classList.add('active');
+                    break;
+                case 2:
+                    phase3.classList.add('active');
+                    break;
+                case 3:
+                    phase4.classList.add('active');
+                    break;
+            }
+        }
+        
+        // 切换树木
+        function changeTree() {
+            if (isBreathing && !isPaused) {
+                if (!confirm("呼吸练习正在进行中，切换树木会重置呼吸练习。确定要切换吗？")) {
+                    return;
+                }
+                resetBreathing();
+            }
+            
+            // 显示加载状态
+            loadingOverlay.style.display = 'flex';
+            
+            // 选择下一棵树
+            currentTreeIndex = (currentTreeIndex + 1) % realTrees.length;
+            
+            // 预加载新图片
+            const newTree = realTrees[currentTreeIndex];
+            const img = new Image();
+            
+            img.onload = function() {
+                updateTreeInfo();
+                hideLoading();
+                
+                // 显示切换提示
+                breathInstruction.textContent = `已切换到${newTree.name}，看着这棵真实的树木开始呼吸练习`;
+                breathInstruction.style.color = newTree.color;
+                
+                setTimeout(() => {
+                    breathInstruction.style.color = '';
+                }, 3000);
+            };
+            
+            img.onerror = function() {
+                loadFallbackTree();
+            };
+            
+            img.src = newTree.image;
+        }
+        
+        // 重置呼吸练习
+        function resetBreathing() {
+            // 停止计时器
+            clearInterval(breathTimer);
+            
+            // 重置状态
+            isBreathing = false;
+            isPaused = false;
+            breathPhase = 0;
+            breathCount = 0;
+            totalTime = 0;
+            
+            // 重置显示
+            breathTimerDisplay.textContent = "0";
+            breathText.textContent = "准备呼吸";
+            breathInstruction.textContent = "点击'开始呼吸'按钮，跟随真实树木的节奏呼吸";
+            breathCircle.classList.remove('breathing-in', 'breathing-hold', 'breathing-out');
+            breathCircle.style.borderColor = '#4caf50';
+            breathPulse.style.animation = 'none';
+            breathingTree.style.transform = 'scale(1)';
+            
+            // 重置按钮状态
+            startBreathBtn.innerHTML = '<i class="fas fa-play-circle"></i> 开始呼吸';
+            startBreathBtn.disabled = false;
+            pauseBreathBtn.innerHTML = '<i class="fas fa-pause-circle"></i> 暂停';
+            pauseBreathBtn.disabled = true;
+            
+            // 重置阶段指示器
+            updatePhaseIndicator();
+        }
+        
+        // 自动切换树木（每2分钟）
+        setInterval(() => {
+            if (!isBreathing && Math.random() > 0.7) {
+                changeTree();
+            }
+        }, 120000);
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+        
+        // 添加键盘快捷键
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case ' ':
+                case 'Spacebar':
+                    event.preventDefault();
+                    if (isBreathing && !isPaused) {
+                        togglePause();
+                    } else {
+                        startBreathing();
+                    }
+                    break;
+                case 'r':
+                case 'R':
+                    if (event.ctrlKey) {
+                        resetBreathing();
+                    }
+                    break;
+                case 't':
+                case 'T':
+                    changeTree();
+                    break;
+            }
+        });
+        
+        // 添加呼吸提示
+        console.log("🌲 真实树木呼吸疗愈站已加载");
+        console.log("提示：看着真实的树木图片，跟随呼吸节奏，可以按空格键开始/暂停呼吸练习");
+    </script>
+</body>
+</html>
